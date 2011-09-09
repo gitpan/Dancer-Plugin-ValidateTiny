@@ -1,5 +1,5 @@
-Dancer-Plugin-ValidateTiny version 0.1
-======================================
+Dancer-Plugin-ValidateTiny version 0.01
+=======================================
 
 Dancer::Plugin::ValidateTiny - Validate::Tiny dancer plugin.
 
@@ -28,5 +28,3 @@ Copyright (C) 2011 by Alexey Kolganov
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.10.1 or,
 at your option, any later version of Perl 5 you may have available.
-
-

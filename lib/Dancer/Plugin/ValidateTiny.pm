@@ -114,7 +114,7 @@ __END__
 
 =head1 NAME
 
-Dancer::Plugin::ValidateTiny - Validate::Tiny dancer plugin.
+Dancer::Plugin::ValidateTiny - Validate::Tiny Dancer plugin.
 
 =head1 VERSION
 
@@ -122,7 +122,7 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-Easy and pretty cool validating data with Validate::Tiny module:
+Easy and cool validating data with Validate::Tiny module:
 
     use Dancer::Plugin::ValidateTiny;
     
@@ -140,21 +140,16 @@ Rule file is pretty too:
 
     {
         # Fields for validating
-        fields => [qw/login email password password2/],
+        fields => [ qw/login email password password2/ ],
         filters => [
-            # Remove spaces from all
-            qr/.+/ => filter(qw/trim strip/),
-    
-            # Lowercase email
+            qr/.+/ => filter(qw/trim strip/),    
             email => filter('lc'),
         ],
         checks => [
-            [qw/login email password password2/] => is_required("Field required!"),
+            [ qw/login email password password2/ ] => is_required("Field required!"),
             
             login => is_long_between( 2, 25, 'Your login should have between 2 and 25 characters.' ),
             email => sub {
-                # Note, that @_ contains value to be checked
-                # and a reference to the filtered input hash
                 check_email($_[0], "Please enter a valid email address.");
                 },
             password => is_long_between( 4, 40, 'Your password should have between 4 and 40 characters.' ),
@@ -162,13 +157,75 @@ Rule file is pretty too:
         ],
     }
 
+I<Note, that C<@_> in anonymous sub in C<checks> section contains value to be checked
+and a reference to the filtered input hash. Check L<Validate::Tiny> documentation for
+this.>
+
+
 =head1 DESCRIPTION
 
-Dancer::Plugin::ValidateTiny - is a simple wrapper for use Validate::Tiny module.
+Simple Dancer plugin for use L<Validate::Tiny> module.
+
+It provides simple use for L<Validate::Tiny> way of validating user input with
+Dancer applications.
+
+=head1 METHODS
+
+=over
+
+=item validate
+
+This is the main method, that receiving C<params> from C<POST> or C<GET>, and
+filename, which contains rules for validation:
+
+    my $params = params;
+    my $data = validator($params, 'form.pl');
+
+After this, in C<$data> you'll have a structure like:
+
+    {
+      'valid' => 0,
+      'result' => {
+                  'err_login' => 'Your login should have between 4 and 25 characters.',
+                  'err_email' => 'Please enter a valid email address.',
+                  'err_password' => 'Field required!'
+                  'login' => 'foo',
+                  'email' => 'test input',
+                  'password' => ''
+                }
+    };
+
+Where C<valid> field is an indicator, that you can use like C<if($data-E<gt>{valid}) { ... }>.
+
+And C<result> field, that contains B<already filtered> params and error messages for
+them with special prefixes. Note, that you can set up L</error_prefix> in config file.
+
+=back
+
+=head1 RULE FILES
+
+In your Dancer application directory you need to create sub-directory for rule files
+and place here rules, that you will use for validation. In this files you need to create
+a simple structure like this one:
+
+    {
+        fields => [qw/city zip_code/],
+        checks => [
+            [qw/city zip_code/] => is_required("Field required!"),
+            
+            city => is_long_at_most( 40, 'City name is too long' ),
+            zip_code => is_long_at_least( 5, 'Bad zip code' ),
+        ],
+    }
+
+For other rules, you can refer to the documentation of L<Validate::Tiny> module.
+
+After creating rule file, you just need to specify it's name in L</validate> method.
+Simple, yeah? :)
 
 =head1 CONFIG
 
-In your config you can use there options:
+In your config file you can use these settings:
 
     plugins:
       ValidateTiny:
@@ -176,28 +233,33 @@ In your config you can use there options:
         error_prefix: err_
         is_full: 0
 
-=head2 Config options
+Where:
 
 =over
 
 =item rules_dir
 
-Directory, where you can store your rule files with .pl extension.
+Directory, where you will store your rule files. Plugin looking it in your Dancer
+application root.
 
 =item error_prefix
 
-Prefix, that used to separate error fields from normal values in resulting hash
+Prefix, that used to separate error fields from normal values in C<result> hash.
 
 =item is_full
 
-If this option is set to 1, call of C<validator> returning
-an object, that you can use as standart Validate::Tiny object.
+If this option is set to C<1>, call of C<validator> returning
+an object, that you can use as standart L<Validate::Tiny> object.
 
 =back
 
+=head1 SEE ALSO
+
+L<Validate::Tiny>
+
 =head1 AUTHOR
 
-Alexey Kolganov, <akalgan at gmail.com>
+Alexey Kolganov, C<< <kalgan@cpan.org> >>
 
 =head1 COPYRIGHT AND LICENSE
 
