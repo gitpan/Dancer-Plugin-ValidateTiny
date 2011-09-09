@@ -1,0 +1,6 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Dancer-Plugin-ValidateTiny.t
+lib/Dancer/Plugin/ValidateTiny.pm
