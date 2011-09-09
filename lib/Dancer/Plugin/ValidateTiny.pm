@@ -9,7 +9,7 @@ use Validate::Tiny ':all';
 use Email::Valid;
 
 
-our $VERSION = '0.01';
+our $VERSION = '0.03';
 
 my $settings = plugin_setting;
 
@@ -118,7 +118,7 @@ Dancer::Plugin::ValidateTiny - Validate::Tiny Dancer plugin.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.03
 
 =head1 SYNOPSIS
 
