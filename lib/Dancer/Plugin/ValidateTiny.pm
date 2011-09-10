@@ -9,7 +9,7 @@ use Validate::Tiny ':all';
 use Email::Valid;
 
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 my $settings = plugin_setting;
 
@@ -118,11 +118,11 @@ Dancer::Plugin::ValidateTiny - Validate::Tiny Dancer plugin.
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =head1 SYNOPSIS
 
-Easy and cool validating data with Validate::Tiny module:
+Easy and cool validating data with L<Validate::Tiny> module:
 
     use Dancer::Plugin::ValidateTiny;
     
@@ -157,9 +157,9 @@ Rule file is pretty too:
         ],
     }
 
-I<Note, that C<@_> in anonymous sub in C<checks> section contains value to be checked
+Note, that C<@_> in anonymous sub in C<checks> section contains value to be checked
 and a reference to the filtered input hash. Check L<Validate::Tiny> documentation for
-this.>
+this.
 
 
 =head1 DESCRIPTION
@@ -167,15 +167,14 @@ this.>
 Simple Dancer plugin for use L<Validate::Tiny> module.
 
 It provides simple use for L<Validate::Tiny> way of validating user input with
-Dancer applications.
+Dancer applications with some additions and modifications, such as separate files
+for rules and additional functions for data validation.
 
 =head1 METHODS
 
-=over
+=head2 validate
 
-=item validate
-
-This is the main method, that receiving C<params> from C<POST> or C<GET>, and
+This is the main method, that receiving C<params> from C<POST> or C<GET> (or whatever), and
 filename, which contains rules for validation:
 
     my $params = params;
@@ -200,8 +199,6 @@ Where C<valid> field is an indicator, that you can use like C<if($data-E<gt>{val
 And C<result> field, that contains B<already filtered> params and error messages for
 them with special prefixes. Note, that you can set up L</error_prefix> in config file.
 
-=back
-
 =head1 RULE FILES
 
 In your Dancer application directory you need to create sub-directory for rule files
@@ -223,6 +220,27 @@ For other rules, you can refer to the documentation of L<Validate::Tiny> module.
 After creating rule file, you just need to specify it's name in L</validate> method.
 Simple, yeah? :)
 
+
+=head1 ADDITIONAL RULES
+
+There is some additional subroutines, that you can use in rule files:
+
+=head2 check_email
+
+    {
+        fields => "email",
+        filters => [
+            email => filter('trim', 'strip', 'lc')
+        ],
+        checks => [
+            email => sub { check_email($_[0], "Please enter a valid e-mail address.") },
+        ],
+    }
+
+This subroutine checking e-mail address conforms to the RFC822 specification with L<Email::Valid>.
+
+Note, that C<checks> processing data, that B<already filtered> by C<filters>.
+
 =head1 CONFIG
 
 In your config file you can use these settings:
@@ -235,27 +253,26 @@ In your config file you can use these settings:
 
 Where:
 
-=over
-
-=item rules_dir
+=head2 rules_dir
 
 Directory, where you will store your rule files. Plugin looking it in your Dancer
 application root.
 
-=item error_prefix
+=head2 error_prefix
 
 Prefix, that used to separate error fields from normal values in C<result> hash.
+It is very convenient when you use the template engine, such as L<Template::Toolkit>
+or L<HTML::Template>. You simply pass the data to the template engine, and it handles
+the logic of output errors and/or warnings for user.
 
-=item is_full
+=head2 is_full
 
 If this option is set to C<1>, call of C<validator> returning
 an object, that you can use as standart L<Validate::Tiny> object.
 
-=back
-
 =head1 SEE ALSO
 
-L<Validate::Tiny>
+L<Validate::Tiny> L<Dancer::Plugin::FormValidator> L<Dancer::Plugin::DataFu>
 
 =head1 AUTHOR
 

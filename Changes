@@ -6,3 +6,7 @@ Revision history for Perl extension Dancer::Plugin::ValidateTiny.
 
 0.03  Sat Sep 10 03:12:02 2011
 	- added POD documentation
+
+0.04  Sat Sep 10 20:21:14 2011
+	- updated Makefile.PL for required modules versions
+	- updated POD documentation
